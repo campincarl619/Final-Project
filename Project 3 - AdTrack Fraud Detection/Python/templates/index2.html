@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		ML Project
+	</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>-->
+</head>
+
+
+<body>
+
+<style>
+body {
+  background-color: #1a2028;
+}
+h3 {
+	color: white;
+}
+</style>
+
+	<div class="container-fluid">
+		<div class="jumbotron text-center" style="background-color: #293340">
+			<div style="color: white">
+				<h1>ML Project</h1>	
+			</div>
+		</div>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-2">
+					<select id="chartType" onchange="getData(this.value)">
+						<option value = "dt">Decision Tree</option>
+						<option value = "rf">Random Forest</option>
+						<option value = "tf">Tensorflow</option>
+					</select>
+
+				</div>
+				<div class="col-md-2">
+					<a href="{{ url_for('static', filename='KnowYourData.html') }}"><strong>Know your Sample!</strong></a>
+				</div>
+			</div>
+			<div class="col-md-6" id="whiteText" style="background-color: #293340">
+				<center><h3>OS TYPE (Top 10)</h3></center>
+				<div id="phoneChart"></div>
+			</div>
+			<div class="col-md-6" id="whiteText" style="background-color: #293340">
+				<center><h3>TIME OF DAY</h3></center>
+				<div id="todChart"></div>
+			</div>
+			<div class="col-md-6" id="whiteText" style="background-color: #293340">
+				<center><h3>DEVICE TYPE (Top 10)</h3></center>
+				<div id="deviceChart"></div>
+			</div>
+			<div class="col-md-6" id="whiteText" style="background-color: #293340">
+				<center><h3>DAY OF WEEK</h3></center>
+				<div id="dowChart"></div>
+			</div>
+
+				<script type="text/javascript">
+
+					var mycolors = ['rgba(204, 204, 204, .7)', 'rgba(168, 168, 168, .7)',
+                                       'rgba(197, 202, 233, .7)', 'rgba(115, 92, 176, .7)',
+                                       'rgba(86, 119, 252, .7)', 'rgba(3, 169, 244, .7)',
+                                       'rgba(0, 184, 212, .7)', 'rgba(1, 151, 139, .7)', 'rgba(139, 194, 74, .7)',
+                                       'rgba(205, 220, 57, .7)', 'rgba(245, 212, 0, .7)', 'rgba(255, 186, 7, .7)'];
+
+						//******************************************************************************************
+						//-----DECISION TREE-----
+						//Initiation of Variables
+						//******************************************************************************************
+						var osPhoneDT =[];
+						var osCountDT = [];
+						var devicePhoneDT = [];
+						var deviceCountDT = [];
+						var todPhoneDT = [];
+						var todCountDT = [];
+						var dowPhoneDT = [];
+						var dowCountDT = [];
+
+						//******************************************************************************************
+						//-----Random Forest-----
+						//Initiation of Variables
+						//******************************************************************************************
+						var osPhoneRF =[];
+						var osCountRF = [];
+						var devicePhoneRF = [];
+						var deviceCountRF = [];
+						var todPhoneRF = [];
+						var todCountRF = [];
+						var dowPhoneRF = [];
+						var dowCountRF = [];
+
+						//******************************************************************************************
+						//-----Tensorflow-----
+						//Initiation of Variables
+						//******************************************************************************************
+						var osPhoneTF =[];
+						var osCountTF = [];
+						var devicePhoneTF = [];
+						var deviceCountTF = [];
+						var todPhoneTF = [];
+						var todCountTF = [];
+						var dowPhoneTF = [];
+						var dowCountTF = [];
+
+
+					Plotly.d3.json("/rf", function(err,dataRF) {
+						if(err) throw err;
+
+						console.log("RF");
+						console.log(dataRF);
+
+						// Loading Graphs -----------------------------
+						//     OS
+						for (var i in dataRF[0]) {
+							osPhoneRF.push(dataRF[0][i].SumRandomForest);
+							osCountRF.push(dataRF[0][i].os);
+						}
+
+						//     Device
+						for (var i in dataRF[1]) {
+							devicePhoneRF.push(dataRF[1][i].SumRandomForest);
+							deviceCountRF.push(dataRF[1][i].device);
+						}
+
+						//     Time of Day
+						for (var i in dataRF[2]) {
+							todPhoneRF.push(dataRF[2][i].SumRandomForest);
+							todCountRF.push(dataRF[2][i].TOD);
+						}
+
+						//     Day of Week
+						for (var i in dataRF[3]) {
+							dowPhoneRF.push(dataRF[3][i].SumRandomForest);
+							dowCountRF.push(dataRF[3][i].DOW);
+						}
+
+					});
+
+					Plotly.d3.json("/tf", function(err,dataTF) {
+						if(err) throw err;
+
+
+						console.log("TF");
+						console.log(dataTF);
+
+						// Loading Graphs -----------------------------
+						//     OS
+						for (var i in dataTF[0]) {
+							osPhoneTF.push(dataTF[0][i].SumTensorFlow);
+							osCountTF.push(dataTF[0][i].os);
+						}
+
+						//     Device
+						for (var i in dataTF[1]) {
+							devicePhoneTF.push(dataTF[1][i].SumTensorFlow);
+							deviceCountTF.push(dataTF[1][i].device);
+						}
+
+						//     Time of Day
+						for (var i in dataTF[2]) {
+							todPhoneTF.push(dataTF[2][i].SumTensorFlow);
+							todCountTF.push(dataTF[2][i].TOD);
+						}
+
+						//     Day of Week
+						for (var i in dataTF[3]) {
+							dowPhoneTF.push(dataTF[3][i].SumTensorFlow);
+							dowCountTF.push(dataTF[3][i].DOW);
+						}
+
+					});
+
+
+					Plotly.d3.json("/dt", function(err,dataDT) {
+						if(err) throw err;
+
+						console.log("DT");
+						console.log(dataDT);
+
+						// Loading Graphs -----------------------------
+						//     OS
+						for (var i in dataDT[0]) {
+							osPhoneDT.push(dataDT[0][i].SumDecisionTree);
+							osCountDT.push(dataDT[0][i].os);
+						}
+
+						//     Device
+						for (var i in dataDT[1]) {
+							devicePhoneDT.push(dataDT[1][i].SumDecisionTree);
+							deviceCountDT.push(dataDT[1][i].device);
+						}
+
+						//     Time of Day
+						for (var i in dataDT[2]) {
+							todPhoneDT.push(dataDT[2][i].SumDecisionTree);
+							todCountDT.push(dataDT[2][i].TOD);
+						}
+
+						//     Day of Week
+						for (var i in dataDT[3]) {
+							dowPhoneDT.push(dataDT[3][i].SumDecisionTree);
+							dowCountDT.push(dataDT[3][i].DOW);
+						}
+
+						//Loading Graphs for the first time
+						//     OS
+						var phoneDataDT = [
+						  {
+						    x: osCountDT,
+						    y: osPhoneDT,
+						    marker:{
+    							color: mycolors	
+  							},
+						    type: 'bar'
+						  }
+						];
+						Plotly.newPlot('phoneChart', phoneDataDT);
+
+						//     Device
+						var deviceDataDT = [
+						  {
+						    x: deviceCountDT,
+						    y: devicePhoneDT,
+						    marker:{
+    							color: mycolors
+  							},
+						    type: 'bar'
+						  }
+						];
+						Plotly.newPlot('deviceChart', deviceDataDT);
+
+						//     Time of Day
+						var todDataDT = [
+						  {
+						    x: todCountDT,
+						    y: todPhoneDT,
+						    marker:{
+    							color: mycolors
+  							},
+						    type: 'bar'
+						  }
+						];
+						Plotly.newPlot('todChart', todDataDT);
+
+						//     Day of Week
+						var dowDataDT = [
+						  {
+						    x: dowCountDT,
+						    y: dowPhoneDT,
+						    marker:{
+    							color: mycolors
+  							},
+						    type: 'bar'
+						  }
+						];
+						Plotly.newPlot('dowChart', dowDataDT);
+
+
+						console.log("Finished Loading");
+
+					});
+
+
+					var select = document.getElementById('chartType');
+
+function getData(dataset) {
+
+	console.log(dataset);
+
+    switch (dataset) {
+        case 'dt':
+
+			var phoneDataDT = [
+			{
+				x: osCountDT,
+				y: osPhoneDT,
+				marker:{
+					color: mycolors
+				},
+				type: 'bar'
+			}
+			];
+			Plotly.newPlot('phoneChart', phoneDataDT);
+
+			//     Device
+			var deviceDataDT = [
+			  {
+			    x: deviceCountDT,
+			    y: devicePhoneDT,
+			    marker:{
+					color: mycolors
+				},
+			    type: 'bar'
+			  }
+			];
+			Plotly.newPlot('deviceChart', deviceDataDT);
+
+			//     Time of Day
+			var todDataDT = [
+			  {
+			    x: todCountDT,
+			    y: todPhoneDT,
+			    marker:{
+					color: mycolors
+				},
+			    type: 'bar'
+			  }
+			];
+			Plotly.newPlot('todChart', todDataDT);
+
+			//     Day of Week
+			var dowDataDT = [
+			  {
+			    x: dowCountDT,
+			    y: dowPhoneDT,
+			    marker:{
+					color: mycolors
+				},
+			    type: 'bar'
+			  }
+			];
+			Plotly.newPlot('dowChart', dowDataDT);
+            break;
+        case 'rf':
+
+			var phoneDataRF = [
+			{
+				x: osCountRF,
+				y: osPhoneRF,
+				marker:{
+					color: mycolors
+				},
+				type: 'bar'
+			}
+			];
+			Plotly.newPlot('phoneChart', phoneDataRF);
+
+			var deviceDataRF = [
+			  {
+			    x: deviceCountRF,
+			    y: devicePhoneRF,
+			    marker:{
+					color: mycolors
+				},
+			    type: 'bar'
+			  }
+			];
+			Plotly.newPlot('deviceChart', deviceDataRF);
+
+			var todDataRF = [
+			  {
+			    x: todCountRF,
+			    y: todPhoneRF,
+			    marker:{
+					color: mycolors
+				},
+			    type: 'bar'
+			  }
+			];
+			Plotly.newPlot('todChart', todDataRF);
+
+			var dowDataRF = [
+			  {
+			    x: dowCountRF,
+			    y: dowPhoneRF,
+			    marker:{
+					color: mycolors
+				},
+			    type: 'bar'
+			  }
+			];
+			Plotly.newPlot('dowChart', dowDataRF);
+            break;
+        case 'tf':
+
+        console.log(osPhoneTF);
+			var phoneDataTF = [
+			  {
+			    x: osCountTF,
+			    y: osPhoneTF,
+			    marker:{
+					color: mycolors
+				},
+			    type: 'bar'
+			  }
+			];
+			Plotly.newPlot('phoneChart', phoneDataTF);
+
+			var deviceDataTF = [
+			  {
+			    x: deviceCountTF,
+			    y: devicePhoneTF,
+			    marker:{
+					color: mycolors
+				},
+			    type: 'bar'
+			  }
+			];
+			Plotly.newPlot('deviceChart', deviceDataTF);
+
+			var todDataTF = [
+			  {
+			    x: todCountTF,
+			    y: todPhoneTF,
+			    marker:{
+					color: mycolors
+				},
+			    type: 'bar'
+			  }
+			];
+			Plotly.newPlot('todChart', todDataTF);
+
+			var dowDataTF = [
+			  {
+			    x: dowCountTF,
+			    y: dowPhoneTF,
+			    marker:{
+					color: mycolors
+				},
+			    type: 'bar'
+			  }
+			];
+			Plotly.newPlot('dowChart', dowDataTF);
+            break;
+    }
+
+
+    var select = document.getElementById('chartType');
+}
+
+
+				</script>
+
+		</div>
+	</div>
+
+
+</body>
+</html>
